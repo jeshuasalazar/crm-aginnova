@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — CRM Aginnova</title>
+<link rel="stylesheet" href="crm-styles.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="crm-nav.js"></script>
+</head>
+<body>
+<div class="app-layout">
+  <div id="sidebar-mount"></div>
+  <div class="main-content">
+    <div id="header-mount"></div>
+    <div class="content">
+
+      <!-- BREADCRUMB -->
+      <div class="breadcrumb">
+        <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Panel Principal
+      </div>
+
+      <!-- KPI CARDS -->
+      <div class="kpi-grid">
+        <div class="kpi-card blue">
+          <div class="kpi-icon blue">
+            <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <div class="kpi-label">Clientes Activos</div>
+          <div class="kpi-value">12</div>
+          <div class="kpi-trend up">↑ 2 este mes</div>
+        </div>
+        <div class="kpi-card green">
+          <div class="kpi-icon green">
+            <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </div>
+          <div class="kpi-label">Ventas del Mes</div>
+          <div class="kpi-value" style="font-size:22px">$1.24M</div>
+          <div class="kpi-trend up">↑ 18.3% vs mes ant.</div>
+        </div>
+        <div class="kpi-card yellow">
+          <div class="kpi-icon yellow">
+            <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          </div>
+          <div class="kpi-label">Comisión Pendiente</div>
+          <div class="kpi-value" style="font-size:22px">$38,420</div>
+          <div class="kpi-trend flat">→ 5 clientes contribuyen</div>
+        </div>
+        <div class="kpi-card orange">
+          <div class="kpi-icon orange">
+            <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          </div>
+          <div class="kpi-label">Alertas Sin Resolver</div>
+          <div class="kpi-value">3</div>
+          <div class="kpi-trend down">↑ 1 crítica nueva hoy</div>
+        </div>
+      </div>
+
+      <!-- PORTFOLIO DE CLIENTES -->
+      <div class="flex items-center justify-between mb-4">
+        <div class="section-title" style="margin-bottom:0">Portfolio de Clientes</div>
+        <a href="crm-clientes-admin.html" class="btn btn-secondary btn-sm">Ver todos</a>
+      </div>
+      <div class="portfolio-grid mb-6">
+
+        <!-- NALUA -->
+        <div class="client-card">
+          <div class="client-card-header">
+            <div>
+              <div class="client-name">NALUA</div>
+              <div class="client-sector">Retail · B2C</div>
+            </div>
+            <div class="semaforo green" title="En camino a meta"></div>
+          </div>
+          <div class="client-kpis">
+            <div class="client-kpi">
+              <div class="client-kpi-label">Ventas mes</div>
+              <div class="client-kpi-val">$58,500</div>
+            </div>
+            <div class="client-kpi">
+              <div class="client-kpi-label">vs. Meta</div>
+              <div class="client-kpi-val" style="color:var(--success)">96.3%</div>
+            </div>
+            <div class="client-kpi">
+              <div class="client-kpi-label">Actualiz.</div>
+              <div class="client-kpi-val">Hoy</div>
+            </div>
+          </div>
+          <div class="client-card-actions">
+            <a href="crm-cliente.html" class="btn btn-primary btn-sm" style="flex:1;justify-content:center">Ver Dashboard</a>
+            <a href="crm-alertas.html" class="btn btn-ghost btn-sm btn-icon" title="Alertas">
+              <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- KAWDOBA -->
+        <div class="client-card">
+          <div class="client-card-header">
+            <div>
+              <div class="client-name">KAWDOBA</div>
+              <div class="client-sector">Manufactura · B2B</div>
+            </div>
+            <div class="semaforo yellow" title="Atención requerida"></div>
+          </div>
+          <div class="client-kpis">
+            <div class="client-kpi">
+              <div class="client-kpi-label">Ventas mes</div>
+              <div class="client-kpi-val">$165,000</div>
+            </div>
+            <div class="client-kpi">
+              <div class="client-kpi-label">vs. Meta</div>
+              <div class="client-kpi-val" style="color:#b07b0f">91.7%</div>
+            </div>
+            <div class="client-kpi">
+              <div class="client-kpi-label">Actualiz.</div>
+              <div class="client-kpi-val">Hoy</div>
+            </div>
+          </div>
+          <div class="client-card-actions">
+            <a href="crm-cliente.html" class="btn btn-primary btn-sm" style="flex:1;justify-content:center">Ver Dashboard</a>
+            <a href="crm-alertas.html" class="btn btn-ghost btn-sm btn-icon" title="Alertas" style="position:relative">
+              <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+              <span style="position:absolute;top:2px;right:2px;background:var(--danger);color:#fff;font-size:8px;width:13px;height:13px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700">2</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- FERREX -->
+        <div class="client-card">
+          <div class="client-card-header">
+            <div>
+              <div class="client-name">FERREX</div>
+              <div class="client-sector">Ferretería · B2B</div>
+            </div>
+            <div class="semaforo green" title="En camino a meta"></div>
+          </div>
+          <div class="client-kpis">
+            <div class="client-kpi">
+              <div class="client-kpi-label">Ventas mes</div>
+              <div class="client-kpi-val">$92,300</div>
+            </div>
+            <div class="client-kpi">
+              <div class="client-kpi-label">vs. Meta</div>
+              <div class="client-kpi-val" style="color:var(--success)">103.2%</div>
+            </div>
+            <div class="client-kpi">
+              <div class="client-kpi-label">Actualiz.</div>
+              <div class="client-kpi-val">Ayer</div>
+            </div>
+          </div>
+          <div class="client-card-actions">
+            <a href="crm-cliente.html" class="btn btn-primary btn-sm" style="flex:1;justify-content:center">Ver Dashboard</a>
+            <a href="crm-alertas.html" class="btn btn-ghost btn-sm btn-icon" title="Alertas">
+              <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- SOLTEK -->
+        <div class="client-card">
+          <div class="client-card-header">
+            <div>
+              <div class="client-name">SOLTEK</div>
+              <div class="client-sector">Tecnología · B2B</div>
+            </div>
+            <div class="semaforo red" title="Alerta crítica"></div>
+          </div>
+          <div class="client-kpis">
+            <div class="client-kpi">
+              <div class="client-kpi-label">Ventas mes</div>
+              <div class="client-kpi-val">$34,100</div>
+            </div>
+            <div class="client-kpi">
+              <div class="client-kpi-label">vs. Meta</div>
+              <div class="client-kpi-val" style="color:var(--danger)">68.2%</div>
+            </div>
+            <div class="client-kpi">
+              <div class="client-kpi-label">Actualiz.</div>
+              <div class="client-kpi-val">3 días</div>
+            </div>
+          </div>
+          <div class="client-card-actions">
+            <a href="crm-cliente.html" class="btn btn-primary btn-sm" style="flex:1;justify-content:center">Ver Dashboard</a>
+            <a href="crm-alertas.html" class="btn btn-ghost btn-sm btn-icon" title="Alertas" style="position:relative">
+              <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+              <span style="position:absolute;top:2px;right:2px;background:var(--danger);color:#fff;font-size:8px;width:13px;height:13px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700">1</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- MODA360 -->
+        <div class="client-card">
+          <div class="client-card-header">
+            <div>
+              <div class="client-name">MODA360</div>
+              <div class="client-sector">Moda · B2C</div>
+            </div>
+            <div class="semaforo green"></div>
+          </div>
+          <div class="client-kpis">
+            <div class="client-kpi">
+              <div class="client-kpi-label">Ventas mes</div>
+              <div class="client-kpi-val">$78,900</div>
+            </div>
+            <div class="client-kpi">
+              <div class="client-kpi-label">vs. Meta</div>
+              <div class="client-kpi-val" style="color:var(--success)">98.6%</div>
+            </div>
+            <div class="client-kpi">
+              <div class="client-kpi-label">Actualiz.</div>
+              <div class="client-kpi-val">Hoy</div>
+            </div>
+          </div>
+          <div class="client-card-actions">
+            <a href="crm-cliente.html" class="btn btn-primary btn-sm" style="flex:1;justify-content:center">Ver Dashboard</a>
+            <a href="crm-alertas.html" class="btn btn-ghost btn-sm btn-icon">
+              <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- AGROTEX -->
+        <div class="client-card">
+          <div class="client-card-header">
+            <div>
+              <div class="client-name">AGROTEX</div>
+              <div class="client-sector">Agro · B2B</div>
+            </div>
+            <div class="semaforo yellow"></div>
+          </div>
+          <div class="client-kpis">
+            <div class="client-kpi">
+              <div class="client-kpi-label">Ventas mes</div>
+              <div class="client-kpi-val">$210,500</div>
+            </div>
+            <div class="client-kpi">
+              <div class="client-kpi-label">vs. Meta</div>
+              <div class="client-kpi-val" style="color:#b07b0f">87.9%</div>
+            </div>
+            <div class="client-kpi">
+              <div class="client-kpi-label">Actualiz.</div>
+              <div class="client-kpi-val">Ayer</div>
+            </div>
+          </div>
+          <div class="client-card-actions">
+            <a href="crm-cliente.html" class="btn btn-primary btn-sm" style="flex:1;justify-content:center">Ver Dashboard</a>
+            <a href="crm-alertas.html" class="btn btn-ghost btn-sm btn-icon">
+              <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- CHARTS + ACCIONES -->
+      <div class="grid-60-40" style="margin-bottom:24px">
+        <!-- Tendencia de Ventas -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Tendencia de Ventas — Portafolio</div>
+            <span class="chip blue">Últimas 12 semanas</span>
+          </div>
+          <div class="card-body">
+            <div class="chart-wrap" style="height:220px">
+              <canvas id="trendChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Próximas Acciones -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Acciones Pendientes</div>
+            <span class="chip orange">3 urgentes</span>
+          </div>
+          <div class="card-body" style="padding:12px">
+            <div style="display:flex;flex-direction:column;gap:8px">
+
+              <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;background:var(--danger-lt)">
+                <div style="width:8px;height:8px;border-radius:50%;background:var(--danger);flex-shrink:0"></div>
+                <div style="flex:1">
+                  <div style="font-size:13px;font-weight:600;color:var(--gray-dark)">SOLTEK sin datos — 3 días</div>
+                  <div style="font-size:11.5px;color:var(--gray-mid)">Última carga: 4 Jun 2026</div>
+                </div>
+                <a href="crm-datos.html" class="btn btn-danger btn-sm">Cargar</a>
+              </div>
+
+              <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;background:var(--warning-lt)">
+                <div style="width:8px;height:8px;border-radius:50%;background:var(--warning);flex-shrink:0"></div>
+                <div style="flex:1">
+                  <div style="font-size:13px;font-weight:600;color:var(--gray-dark)">KAWDOBA — meta en riesgo</div>
+                  <div style="font-size:11.5px;color:var(--gray-mid)">91.7% · necesita +$15,000</div>
+                </div>
+                <a href="crm-recomendaciones.html" class="btn btn-sm" style="background:var(--warning);color:#fff">IA</a>
+              </div>
+
+              <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;background:var(--warning-lt)">
+                <div style="width:8px;height:8px;border-radius:50%;background:var(--warning);flex-shrink:0"></div>
+                <div style="flex:1">
+                  <div style="font-size:13px;font-weight:600;color:var(--gray-dark)">AGROTEX — lotes por vencer</div>
+                  <div style="font-size:11.5px;color:var(--gray-mid)">3 lotes vencen en &lt;7 días</div>
+                </div>
+                <a href="crm-alertas.html" class="btn btn-secondary btn-sm">Ver</a>
+              </div>
+
+              <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;background:var(--bg-page)">
+                <div style="width:8px;height:8px;border-radius:50%;background:var(--secondary);flex-shrink:0"></div>
+                <div style="flex:1">
+                  <div style="font-size:13px;font-weight:600;color:var(--gray-dark)">5 recomendaciones IA pendientes</div>
+                  <div style="font-size:11.5px;color:var(--gray-mid)">Requieren revisión y aprobación</div>
+                </div>
+                <a href="crm-recomendaciones.html" class="btn btn-secondary btn-sm">Revisar</a>
+              </div>
+
+              <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;background:var(--bg-page)">
+                <div style="width:8px;height:8px;border-radius:50%;background:var(--gray-mid);flex-shrink:0"></div>
+                <div style="flex:1">
+                  <div style="font-size:13px;font-weight:600;color:var(--gray-dark)">Reporte mensual — 2 clientes</div>
+                  <div style="font-size:11.5px;color:var(--gray-mid)">NALUA y FERREX — exportar PDF</div>
+                </div>
+                <a href="crm-roi.html" class="btn btn-ghost btn-sm">Export</a>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main-content -->
+</div>
+
+<script>
+mountNav('dashboard','Dashboard', { user:'Juan Pérez', role:'Consultor', alerts:3 });
+
+// Trend chart
+const weeks = ['S1','S2','S3','S4','S5','S6','S7','S8','S9','S10','S11','S12'];
+const actual   = [820,854,891,935,980,920,1010,1050,1080,1140,1200,1240];
+const baseline = [750,760,770,780,790,800,810,820,830,840,850,860];
+const meta     = [900,910,920,930,940,950,960,970,980,990,1000,1010];
+
+new Chart(document.getElementById('trendChart'), {
+  type:'line',
+  data:{
+    labels: weeks,
+    datasets:[
+      { label:'Ventas reales (MXN k)', data:actual, borderColor:'#4A7BB5', backgroundColor:'rgba(74,123,181,.08)', fill:true, tension:.4, pointRadius:3, pointBackgroundColor:'#4A7BB5', borderWidth:2.5 },
+      { label:'Baseline', data:baseline, borderColor:'#b0bec5', borderDash:[5,4], fill:false, tension:.4, pointRadius:0, borderWidth:1.5 },
+      { label:'Meta', data:meta, borderColor:'#2E7D32', borderDash:[3,3], fill:false, tension:.4, pointRadius:0, borderWidth:1.5 },
+    ]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{ position:'bottom', labels:{ boxWidth:10, font:{ size:11 }, color:'#718096' } }, tooltip:{ mode:'index', intersect:false } },
+    scales:{
+      x:{ grid:{ display:false }, ticks:{ color:'#b0bec5', font:{ size:10 } } },
+      y:{ grid:{ color:'rgba(0,0,0,.04)' }, ticks:{ color:'#b0bec5', font:{ size:10 }, callback: v => '$'+(v)+'k' } }
+    }
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel ROI — CRM Aginnova</title>
+<link rel="stylesheet" href="crm-styles.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="crm-nav.js"></script>
+</head>
+<body>
+<div class="app-layout">
+  <div id="sidebar-mount"></div>
+  <div class="main-content">
+    <div id="header-mount"></div>
+    <div class="content">
+
+      <div class="breadcrumb">
+        <a href="crm-dashboard.html">Dashboard</a>
+        <span class="breadcrumb-sep">›</span> Panel ROI
+      </div>
+
+      <!-- CLIENT SELECTOR -->
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <div style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:22px;color:var(--primary)">Panel ROI & Comisiones</div>
+          <div style="font-size:13px;color:var(--gray-mid);margin-top:3px">Período: Mayo 2026 · Semana 3 de 4</div>
+        </div>
+        <div class="flex gap-3 items-center">
+          <select class="form-input form-select" style="width:180px" onchange="switchClient(this.value)">
+            <option value="nalua">NALUA — Retail</option>
+            <option value="kawdoba">KAWDOBA — Manufactura</option>
+            <option value="ferrex">FERREX — Ferretería</option>
+          </select>
+          <button class="btn btn-primary" onclick="showToast('Generando reporte PDF...','');setTimeout(()=>showToast('Reporte listo para descarga','success'),1800)">
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Descargar PDF
+          </button>
+        </div>
+      </div>
+
+      <!-- ROI SUMMARY CARDS -->
+      <div id="roiCards" class="kpi-grid mb-6">
+        <div class="kpi-card blue">
+          <div class="kpi-label">Baseline Acordado</div>
+          <div class="kpi-value text-mono" style="font-size:22px">$45,000</div>
+          <div class="kpi-trend flat">→ Referencia mensual</div>
+        </div>
+        <div class="kpi-card green">
+          <div class="kpi-label">Ventas Actuales</div>
+          <div class="kpi-value text-mono" style="font-size:22px">$58,500</div>
+          <div class="kpi-trend up">↑ Sem. 3 acumulado</div>
+        </div>
+        <div class="kpi-card green">
+          <div class="kpi-label">Ventas Incrementales</div>
+          <div class="kpi-value text-mono" style="font-size:22px" style="color:var(--success)">+$13,500</div>
+          <div class="kpi-trend up">↑ 30% sobre baseline</div>
+        </div>
+        <div class="kpi-card orange">
+          <div class="kpi-label">Comisión Ganada</div>
+          <div class="kpi-value text-mono" style="font-size:26px;color:var(--alert)">$1,350</div>
+          <div class="kpi-trend up">↑ Tasa: 10% aplicada</div>
+        </div>
+      </div>
+
+      <!-- CHART + COMMISSION DETAIL -->
+      <div class="grid-60-40 mb-6">
+
+        <!-- ROI Chart -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Baseline vs. Ventas Reales — Semanas del Período</div>
+            <div class="flex gap-2">
+              <span style="display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--gray-mid)"><span style="width:24px;height:2px;background:#b0bec5;display:inline-block;border-top:2px dashed #b0bec5"></span>Baseline</span>
+              <span style="display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--gray-mid)"><span style="width:24px;height:2px;background:#2E7D32;display:inline-block"></span>Meta</span>
+              <span style="display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--secondary)"><span style="width:24px;height:2px;background:var(--secondary);display:inline-block"></span>Real</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="chart-wrap" style="height:240px"><canvas id="roiChart"></canvas></div>
+          </div>
+        </div>
+
+        <!-- Commission detail -->
+        <div class="card">
+          <div class="card-header"><div class="card-title">Estructura de Comisión</div></div>
+          <div class="card-body" style="display:flex;flex-direction:column;gap:10px">
+
+            <div style="background:var(--bg-page);border-radius:8px;padding:12px">
+              <div style="font-size:11px;font-weight:700;color:var(--gray-mid);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Escalonamiento</div>
+              <div style="display:flex;flex-direction:column;gap:6px;font-size:13px">
+                <div class="flex items-center justify-between" style="padding:6px 0;border-bottom:1px solid var(--gray-light)">
+                  <span style="color:var(--gray-grafito)">≤ Baseline</span>
+                  <span style="font-weight:700;color:var(--gray-mid)">0%</span>
+                  <span class="chip gray">No aplica</span>
+                </div>
+                <div class="flex items-center justify-between" style="padding:6px 0;border-bottom:1px solid var(--gray-light);background:rgba(46,125,50,.05);margin:0 -4px;padding:6px 4px;border-radius:4px">
+                  <span style="color:var(--gray-dark);font-weight:600">+35% (meta) ✓</span>
+                  <span style="font-weight:800;color:var(--success)">10%</span>
+                  <span class="chip green">$1,350</span>
+                </div>
+                <div class="flex items-center justify-between" style="padding:6px 0">
+                  <span style="color:var(--gray-grafito)">+70% (doble meta)</span>
+                  <span style="font-weight:700;color:var(--secondary)">15%</span>
+                  <span class="chip blue">$2,025</span>
+                </div>
+              </div>
+            </div>
+
+            <div style="background:linear-gradient(135deg,rgba(28,63,110,.06),rgba(74,123,181,.08));border-radius:8px;padding:14px;border:1.5px solid rgba(74,123,181,.2)">
+              <div style="font-size:11px;font-weight:700;color:var(--secondary);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Comisión actual</div>
+              <div style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:32px;color:var(--alert)">$1,350</div>
+              <div style="font-size:12px;color:var(--gray-mid);margin-top:4px">10% × $13,500 incrementales</div>
+            </div>
+
+            <div style="background:var(--success-lt);border-radius:8px;padding:10px 12px;font-size:13px;color:var(--success)">
+              <strong>Proyección al cierre:</strong> Si la tendencia continúa, comisión final estimada <strong>$1,700</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- HISTORICAL TABLE -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Historial de Comisiones — NALUA</div>
+          <span class="chip blue">Últimos 6 meses</span>
+        </div>
+        <div class="table-wrap">
+          <table class="dtable">
+            <thead>
+              <tr><th>Período</th><th>Baseline</th><th>Ventas Reales</th><th>Incrementales</th><th>Tasa</th><th>Comisión</th><th>Estado</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Mayo 2026</strong></td><td class="text-mono">$45,000</td><td class="text-mono">$58,500*</td><td class="text-mono text-success">+$13,500*</td><td>10%</td>
+                <td class="text-mono"><strong style="color:var(--alert)">$1,350*</strong></td><td><span class="chip yellow">En curso</span></td>
+              </tr>
+              <tr>
+                <td>Abril 2026</td><td class="text-mono">$45,000</td><td class="text-mono">$61,200</td><td class="text-mono text-success">+$16,200</td><td>10%</td>
+                <td class="text-mono"><strong>$1,620</strong></td><td><span class="chip green">Pagada</span></td>
+              </tr>
+              <tr>
+                <td>Marzo 2026</td><td class="text-mono">$45,000</td><td class="text-mono">$55,800</td><td class="text-mono text-success">+$10,800</td><td>10%</td>
+                <td class="text-mono"><strong>$1,080</strong></td><td><span class="chip green">Pagada</span></td>
+              </tr>
+              <tr>
+                <td>Febrero 2026</td><td class="text-mono">$45,000</td><td class="text-mono">$48,200</td><td class="text-mono text-success">+$3,200</td><td>10%</td>
+                <td class="text-mono"><strong>$320</strong></td><td><span class="chip green">Pagada</span></td>
+              </tr>
+              <tr>
+                <td>Enero 2026</td><td class="text-mono">$45,000</td><td class="text-mono">$43,100</td><td class="text-mono text-danger">-$1,900</td><td>0%</td>
+                <td class="text-mono"><strong style="color:var(--gray-mid)">$0</strong></td><td><span class="chip gray">Sin comisión</span></td>
+              </tr>
+              <tr>
+                <td>Dic 2025</td><td class="text-mono">$40,000</td><td class="text-mono">$72,400</td><td class="text-mono text-success">+$32,400</td><td>15%</td>
+                <td class="text-mono"><strong style="color:var(--success)">$4,860</strong></td><td><span class="chip green">Pagada</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="padding:12px 16px;font-size:11.5px;color:var(--gray-mid);border-top:1px solid var(--gray-light)">* Datos del mes en curso (semana 3 de 4). La comisión se liquidará al cierre del mes.</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+mountNav('roi','Panel ROI', { user:'Juan Pérez', role:'Consultor', alerts:3 });
+
+const clientData = {
+  nalua: {
+    baseline:[11250,11250,11250,11250],
+    meta:    [15187,15187,15187,15187],
+    real:    [13200,14800,15500,null],
+    label:'NALUA — Retail'
+  },
+  kawdoba: {
+    baseline:[30000,30000,30000,30000],
+    meta:    [45000,45000,45000,45000],
+    real:    [38000,41000,43500,null],
+    label:'KAWDOBA — Manufactura'
+  },
+  ferrex: {
+    baseline:[22000,22000,22000,22000],
+    meta:    [30000,30000,30000,30000],
+    real:    [24000,26000,28500,null],
+    label:'FERREX — Ferretería'
+  }
+};
+
+let roiChart;
+function buildChart(key) {
+  const d = clientData[key];
+  if (roiChart) roiChart.destroy();
+  roiChart = new Chart(document.getElementById('roiChart'), {
+    type:'line',
+    data:{
+      labels:['Semana 1','Semana 2','Semana 3','Semana 4'],
+      datasets:[
+        { label:'Ventas Reales', data:d.real, borderColor:'#4A7BB5', backgroundColor:'rgba(74,123,181,.12)', fill:true, tension:.4, pointRadius:5, pointBackgroundColor:'#4A7BB5', borderWidth:2.5, spanGaps:false },
+        { label:'Baseline',      data:d.baseline, borderColor:'#b0bec5', borderDash:[6,4], fill:false, tension:0, pointRadius:0, borderWidth:1.5 },
+        { label:'Meta (+35%)',   data:d.meta,     borderColor:'#2E7D32', borderDash:[3,3], fill:false, tension:0, pointRadius:0, borderWidth:1.5 },
+      ]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ display:false }, tooltip:{ mode:'index', intersect:false, callbacks:{ label: ctx => ' '+ctx.dataset.label+': $'+ctx.parsed.y?.toLocaleString('es-MX') } } },
+      scales:{
+        x:{ grid:{display:false}, ticks:{color:'#b0bec5', font:{size:11}} },
+        y:{ grid:{color:'rgba(0,0,0,.04)'}, ticks:{ color:'#b0bec5', font:{size:10}, callback: v=>'$'+v.toLocaleString('es-MX') } }
+      }
+    }
+  });
+}
+
+function switchClient(val) { buildChart(val); }
+
+buildChart('nalua');
+</script>
+</body>
+</html>

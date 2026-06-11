@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Carga de Datos — CRM Aginnova</title>
+<link rel="stylesheet" href="crm-styles.css">
+<script src="crm-nav.js"></script>
+</head>
+<body>
+<div class="app-layout">
+  <div id="sidebar-mount"></div>
+  <div class="main-content">
+    <div id="header-mount"></div>
+    <div class="content">
+
+      <div class="breadcrumb">
+        <a href="crm-dashboard.html">Dashboard</a>
+        <span class="breadcrumb-sep">›</span> Carga de Datos
+      </div>
+
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <div style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:22px;color:var(--primary)">Carga de Datos</div>
+          <div style="font-size:13px;color:var(--gray-mid);margin-top:3px">Importa archivos Excel o CSV para actualizar los KPIs de tus clientes</div>
+        </div>
+        <select class="form-input form-select" style="width:200px">
+          <option>NALUA — Retail</option>
+          <option>KAWDOBA — Manufactura</option>
+          <option>FERREX — Ferretería</option>
+          <option>SOLTEK — Tecnología</option>
+        </select>
+      </div>
+
+      <div class="grid-2 mb-6" style="gap:24px">
+
+        <!-- UPLOAD ZONE -->
+        <div>
+          <div class="card" id="uploadCard">
+            <div class="card-header">
+              <div class="card-title">Subir Archivo</div>
+              <div class="flex gap-2">
+                <span class="chip gray">.xlsx</span>
+                <span class="chip gray">.csv</span>
+                <span class="chip gray">.xls</span>
+              </div>
+            </div>
+            <div class="card-body">
+
+              <!-- Upload area -->
+              <div class="upload-zone" id="dropZone"
+                ondragover="handleDrag(event)" ondragleave="handleDragLeave(event)"
+                ondrop="handleDrop(event)" onclick="document.getElementById('fileInput').click()">
+                <div class="upload-icon">
+                  <svg width="48" height="48" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="17 8 12 3 7 8"/>
+                    <line x1="12" y1="3" x2="12" y2="15"/>
+                  </svg>
+                </div>
+                <div class="upload-title">Arrastra tu archivo aquí</div>
+                <div class="upload-sub">o haz clic para seleccionar</div>
+                <div class="upload-sub" style="margin-top:4px">.xlsx · .xls · .csv — Máx. 25 MB</div>
+              </div>
+              <input type="file" id="fileInput" style="display:none" accept=".xlsx,.xls,.csv" onchange="handleFile(this.files[0])">
+
+              <!-- File selected state (hidden initially) -->
+              <div id="fileInfo" style="display:none;margin-top:14px;background:var(--bg-page);border-radius:8px;padding:12px;display:none;align-items:center;gap:12px">
+                <div style="width:36px;height:36px;background:var(--success-lt);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--success);font-size:18px;flex-shrink:0">📄</div>
+                <div style="flex:1">
+                  <div id="fileName" style="font-weight:600;font-size:13px"></div>
+                  <div id="fileSize" style="font-size:11.5px;color:var(--gray-mid)"></div>
+                </div>
+                <button class="btn btn-ghost btn-sm btn-icon" onclick="clearFile()">
+                  <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+              </div>
+
+              <!-- Validation result (hidden initially) -->
+              <div id="validationPanel" style="display:none;margin-top:16px">
+                <div style="font-size:12.5px;font-weight:700;color:var(--gray-mid);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Validación de columnas</div>
+                <div style="display:flex;flex-direction:column;gap:6px" id="validationRows"></div>
+              </div>
+
+              <!-- Actions -->
+              <div id="actionBtns" style="display:none;margin-top:16px;display:none;gap:10px">
+                <button class="btn btn-success" style="flex:1" onclick="doImport()">
+                  <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                  Importar datos
+                </button>
+                <button class="btn btn-ghost" onclick="clearFile()">Cancelar</button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- FORMAT GUIDE + HISTORY -->
+        <div style="display:flex;flex-direction:column;gap:20px">
+
+          <!-- Format guide -->
+          <div class="card">
+            <div class="card-header"><div class="card-title">Columnas Requeridas</div></div>
+            <div class="card-body" style="padding:12px 0">
+              <table class="dtable">
+                <thead><tr><th>Columna</th><th>Tipo</th><th>Ejemplo</th></tr></thead>
+                <tbody>
+                  <tr><td><code style="background:var(--bg-page);padding:2px 6px;border-radius:4px;font-size:12px">fecha</code></td><td>Fecha</td><td style="color:var(--gray-mid)">2026-06-07</td></tr>
+                  <tr><td><code style="background:var(--bg-page);padding:2px 6px;border-radius:4px;font-size:12px">ventas_mxn</code></td><td>Número</td><td style="color:var(--gray-mid)">15800.00</td></tr>
+                  <tr><td><code style="background:var(--bg-page);padding:2px 6px;border-radius:4px;font-size:12px">unidades</code></td><td>Entero</td><td style="color:var(--gray-mid)">342</td></tr>
+                  <tr><td><code style="background:var(--bg-page);padding:2px 6px;border-radius:4px;font-size:12px">ticket_prom</code></td><td>Número</td><td style="color:var(--gray-mid)">520.50</td></tr>
+                  <tr><td><code style="background:var(--bg-page);padding:2px 6px;border-radius:4px;font-size:12px">canal</code></td><td>Texto</td><td style="color:var(--gray-mid)">online / tienda</td></tr>
+                  <tr><td><code style="background:var(--bg-page);padding:2px 6px;border-radius:4px;font-size:12px">categoria</code></td><td>Texto</td><td style="color:var(--gray-mid)">Sport / Casual</td></tr>
+                </tbody>
+              </table>
+              <div style="padding:10px 14px">
+                <button class="btn btn-ghost btn-sm" style="color:var(--secondary)" onclick="showToast('Descargando plantilla Excel...','')">
+                  <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  Descargar plantilla Excel
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Upload history -->
+          <div class="card">
+            <div class="card-header"><div class="card-title">Historial de Cargas</div></div>
+            <div class="card-body" style="padding:0">
+              <div style="display:flex;flex-direction:column">
+                <div style="display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--gray-light)">
+                  <div style="width:32px;height:32px;background:var(--success-lt);border-radius:7px;display:flex;align-items:center;justify-content:center;color:var(--success);font-size:14px;flex-shrink:0">✓</div>
+                  <div style="flex:1">
+                    <div style="font-size:13px;font-weight:600">ventas_nalua_jun07.xlsx</div>
+                    <div style="font-size:11px;color:var(--gray-mid)">Hoy 14:32 · 1,247 registros · NALUA</div>
+                  </div>
+                  <span class="chip green">OK</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--gray-light)">
+                  <div style="width:32px;height:32px;background:var(--success-lt);border-radius:7px;display:flex;align-items:center;justify-content:center;color:var(--success);font-size:14px;flex-shrink:0">✓</div>
+                  <div style="flex:1">
+                    <div style="font-size:13px;font-weight:600">inventario_kawdoba_jun06.csv</div>
+                    <div style="font-size:11px;color:var(--gray-mid)">06 Jun 09:15 · 892 registros · KAWDOBA</div>
+                  </div>
+                  <span class="chip green">OK</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--gray-light)">
+                  <div style="width:32px;height:32px;background:var(--warning-lt);border-radius:7px;display:flex;align-items:center;justify-content:center;color:#b07b0f;font-size:14px;flex-shrink:0">⚠</div>
+                  <div style="flex:1">
+                    <div style="font-size:13px;font-weight:600">datos_moda360_jun05.xlsx</div>
+                    <div style="font-size:11px;color:var(--gray-mid)">05 Jun 16:44 · 2 col. con advertencia · MODA360</div>
+                  </div>
+                  <span class="chip yellow">Parcial</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;padding:12px 16px">
+                  <div style="width:32px;height:32px;background:var(--danger-lt);border-radius:7px;display:flex;align-items:center;justify-content:center;color:var(--danger);font-size:14px;flex-shrink:0">✕</div>
+                  <div style="flex:1">
+                    <div style="font-size:13px;font-weight:600">reporte_error_jun04.csv</div>
+                    <div style="font-size:11px;color:var(--gray-mid)">04 Jun 11:22 · Formato inválido · FERREX</div>
+                  </div>
+                  <span class="chip red">Error</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- PREVIEW TABLE (hidden until file loaded) -->
+      <div id="previewSection" style="display:none">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Vista Previa — Primeras 10 filas</div>
+            <span class="chip blue" id="previewCount">— filas detectadas</span>
+          </div>
+          <div class="card-body" style="padding:0">
+            <div class="table-wrap">
+              <table class="dtable">
+                <thead><tr><th>fecha</th><th>ventas_mxn</th><th>unidades</th><th>ticket_prom</th><th>canal</th><th>categoria</th></tr></thead>
+                <tbody id="previewBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+mountNav('datos','Carga de Datos', { user:'Juan Pérez', role:'Consultor', alerts:3 });
+
+const MOCK_PREVIEW = [
+  ['2026-06-07','15,840.00','32','495.00','online','Sport'],
+  ['2026-06-07','8,600.00','18','477.78','tienda','Casual'],
+  ['2026-06-06','12,340.00','24','514.17','online','Sport'],
+  ['2026-06-06','7,200.00','15','480.00','tienda','Accesorios'],
+  ['2026-06-05','9,800.00','20','490.00','online','Casual'],
+  ['2026-06-05','4,300.00','9','477.78','tienda','Sport'],
+  ['2026-06-04','11,200.00','23','486.96','online','Sport'],
+  ['2026-06-04','6,100.00','13','469.23','tienda','Casual'],
+  ['2026-06-03','8,900.00','18','494.44','online','Casual'],
+  ['2026-06-03','3,200.00','7','457.14','tienda','Accesorios'],
+];
+
+const REQUIRED_COLS = ['fecha','ventas_mxn','unidades','ticket_prom','canal','categoria'];
+
+function handleDrag(e) { e.preventDefault(); document.getElementById('dropZone').classList.add('drag'); }
+function handleDragLeave() { document.getElementById('dropZone').classList.remove('drag'); }
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('dropZone').classList.remove('drag');
+  const file = e.dataTransfer.files[0];
+  if (file) handleFile(file);
+}
+
+function handleFile(file) {
+  if (!file) return;
+  const fi = document.getElementById('fileInfo');
+  document.getElementById('fileName').textContent = file.name;
+  document.getElementById('fileSize').textContent = (file.size/1024).toFixed(1) + ' KB · ' + file.type.split('/')[1]?.toUpperCase();
+  fi.style.display = 'flex';
+
+  // Simulate validation
+  setTimeout(() => {
+    showValidation();
+    showPreview(file.name);
+    const ab = document.getElementById('actionBtns');
+    ab.style.display = 'flex';
+  }, 600);
+}
+
+function showValidation() {
+  const panel = document.getElementById('validationPanel');
+  const rows  = document.getElementById('validationRows');
+  panel.style.display = 'block';
+
+  const results = REQUIRED_COLS.map((col, i) => ({
+    col, ok: i < 5, warning: i === 4, msg: i < 5 ? 'Columna detectada correctamente' : i===5 ? '⚠ Valores mixtos detectados' : '✕ No encontrada'
+  }));
+
+  rows.innerHTML = results.map(r => `
+    <div style="display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:7px;background:${r.ok?(r.warning?'var(--warning-lt)':'var(--success-lt)'):'var(--danger-lt)'}">
+      <span style="font-size:14px">${r.ok?(r.warning?'⚠':'✓'):'✕'}</span>
+      <code style="font-size:12px;font-weight:700;color:${r.ok?(r.warning?'#b07b0f':'var(--success)'):'var(--danger)'}">${r.col}</code>
+      <span style="font-size:12px;color:var(--gray-grafito);flex:1">${r.msg}</span>
+    </div>
+  `).join('');
+}
+
+function showPreview(fname) {
+  const section = document.getElementById('previewSection');
+  section.style.display = 'block';
+  document.getElementById('previewCount').textContent = '1,247 filas detectadas';
+  const body = document.getElementById('previewBody');
+  body.innerHTML = MOCK_PREVIEW.map(row => `<tr>${row.map(c=>`<td class="${c.includes(',')&&!isNaN(c.replace(/,/g,''))?'text-mono':''}">${c}</td>`).join('')}</tr>`).join('');
+}
+
+function clearFile() {
+  document.getElementById('fileInfo').style.display = 'none';
+  document.getElementById('validationPanel').style.display = 'none';
+  document.getElementById('actionBtns').style.display = 'none';
+  document.getElementById('previewSection').style.display = 'none';
+  document.getElementById('fileInput').value = '';
+}
+
+function doImport() {
+  const btn = event.target;
+  btn.textContent = 'Importando...';
+  btn.disabled = true;
+  setTimeout(() => {
+    showToast('1,247 registros importados exitosamente','success');
+    clearFile();
+    btn.innerHTML = '<svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Importar datos';
+    btn.disabled = false;
+  }, 1800);
+}
+</script>
+</body>
+</html>

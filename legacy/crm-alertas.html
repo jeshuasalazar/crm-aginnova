@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alertas — CRM Aginnova</title>
+<link rel="stylesheet" href="crm-styles.css">
+<script src="crm-nav.js"></script>
+</head>
+<body>
+<div class="app-layout">
+  <div id="sidebar-mount"></div>
+  <div class="main-content">
+    <div id="header-mount"></div>
+    <div class="content">
+
+      <div class="breadcrumb">
+        <a href="crm-dashboard.html">Dashboard</a>
+        <span class="breadcrumb-sep">›</span> Panel de Alertas
+      </div>
+
+      <!-- HEADER -->
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <div style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:22px;color:var(--primary)">Panel de Alertas</div>
+          <div style="font-size:13px;color:var(--gray-mid);margin-top:3px">Monitoreo en tiempo real · Actualizado hace 3 min</div>
+        </div>
+        <div class="flex gap-2">
+          <button class="btn btn-ghost btn-sm" onclick="openModal('thresholdModal')">
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            Configurar umbrales
+          </button>
+          <button class="btn btn-secondary btn-sm" onclick="resolveAll()">Marcar todas resueltas</button>
+        </div>
+      </div>
+
+      <!-- SUMMARY CARDS -->
+      <div class="kpi-grid mb-6" style="grid-template-columns:repeat(4,1fr)">
+        <div class="kpi-card red">
+          <div class="kpi-icon red">
+            <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
+          <div class="kpi-label">Urgencia Alta</div>
+          <div class="kpi-value">1</div>
+          <div class="kpi-trend down">↑ Sin resolver</div>
+        </div>
+        <div class="kpi-card yellow">
+          <div class="kpi-icon yellow">
+            <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          </div>
+          <div class="kpi-label">Urgencia Media</div>
+          <div class="kpi-value">2</div>
+          <div class="kpi-trend flat">→ Atención pronto</div>
+        </div>
+        <div class="kpi-card blue">
+          <div class="kpi-icon blue">
+            <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          </div>
+          <div class="kpi-label">Urgencia Baja</div>
+          <div class="kpi-value">0</div>
+          <div class="kpi-trend up">↑ Sin pendientes</div>
+        </div>
+        <div class="kpi-card green">
+          <div class="kpi-icon green">
+            <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="kpi-label">Resueltas Hoy</div>
+          <div class="kpi-value">4</div>
+          <div class="kpi-trend up">↑ Buen ritmo</div>
+        </div>
+      </div>
+
+      <!-- FILTERS -->
+      <div class="flex gap-3 mb-4" style="flex-wrap:wrap;align-items:center">
+        <span style="font-size:12.5px;font-weight:600;color:var(--gray-mid)">Área:</span>
+        <div class="flex gap-2" id="areaFilters">
+          <button class="btn btn-primary btn-sm" onclick="setArea(this,'todas')">Todas</button>
+          <button class="btn btn-ghost btn-sm" onclick="setArea(this,'ventas')">Ventas</button>
+          <button class="btn btn-ghost btn-sm" onclick="setArea(this,'inventario')">Inventario</button>
+          <button class="btn btn-ghost btn-sm" onclick="setArea(this,'marketing')">Marketing</button>
+          <button class="btn btn-ghost btn-sm" onclick="setArea(this,'logistica')">Logística</button>
+          <button class="btn btn-ghost btn-sm" onclick="setArea(this,'retencion')">Retención</button>
+        </div>
+        <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+          <span style="font-size:12.5px;font-weight:600;color:var(--gray-mid)">Estado:</span>
+          <select class="form-input form-select" style="height:32px;font-size:12.5px;width:140px" onchange="setEstado(this.value)">
+            <option value="sin-resolver">Sin resolver</option>
+            <option value="resueltas">Resueltas</option>
+            <option value="todas">Todas</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- ALERTS LIST -->
+      <div id="alertsList"></div>
+
+    </div>
+  </div>
+</div>
+
+<!-- THRESHOLD CONFIG MODAL -->
+<div class="modal-overlay" id="thresholdModal">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-header">
+      <span class="modal-title">Configurar Umbrales de Alerta</span>
+      <button class="close-btn" onclick="closeModal('thresholdModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="font-size:12.5px;color:var(--gray-mid);margin-bottom:16px">Define cuándo se disparan alertas automáticas para cada métrica.</div>
+
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;padding:10px 12px;background:var(--bg-page);border-radius:8px">
+          <div><div style="font-size:13px;font-weight:600">Caída de ventas vs semana anterior</div><div style="font-size:11px;color:var(--gray-mid)">Umbral para alerta alta</div></div>
+          <input class="form-input" value="-15" style="width:70px;text-align:center">
+          <span style="font-size:13px;color:var(--gray-mid)">%</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;padding:10px 12px;background:var(--bg-page);border-radius:8px">
+          <div><div style="font-size:13px;font-weight:600">Días sin carga de datos</div><div style="font-size:11px;color:var(--gray-mid)">Umbral para alerta media</div></div>
+          <input class="form-input" value="3" style="width:70px;text-align:center">
+          <span style="font-size:13px;color:var(--gray-mid)">días</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;padding:10px 12px;background:var(--bg-page);border-radius:8px">
+          <div><div style="font-size:13px;font-weight:600">% de meta no alcanzado</div><div style="font-size:11px;color:var(--gray-mid)">Umbral para alerta alta</div></div>
+          <input class="form-input" value="85" style="width:70px;text-align:center">
+          <span style="font-size:13px;color:var(--gray-mid)">%</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;padding:10px 12px;background:var(--bg-page);border-radius:8px">
+          <div><div style="font-size:13px;font-weight:600">Stock bajo (días restantes)</div><div style="font-size:11px;color:var(--gray-mid)">Umbral para alerta alta</div></div>
+          <input class="form-input" value="7" style="width:70px;text-align:center">
+          <span style="font-size:13px;color:var(--gray-mid)">días</span>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('thresholdModal')">Cancelar</button>
+      <button class="btn btn-primary" onclick="closeModal('thresholdModal');showToast('Umbrales actualizados','success')">Guardar cambios</button>
+    </div>
+  </div>
+</div>
+
+<script>
+mountNav('alertas','Alertas', { user:'Juan Pérez', role:'Consultor', alerts:3 });
+
+const ALERTS = [
+  { id:1, urgency:'alta', area:'ventas', cliente:'SOLTEK', resolved:false,
+    time:'Hoy 07:18', title:'Ventas cayeron 22% vs. semana anterior',
+    msg:'Las ventas de SOLTEK acumulan una caída sostenida por 3 semanas. La desviación actual es del 31.8% por debajo de la meta mensual.' },
+  { id:2, urgency:'media', area:'inventario', cliente:'KAWDOBA', resolved:false,
+    time:'Hoy 09:42', title:'3 lotes con vencimiento en menos de 7 días',
+    msg:'Los lotes KW-0421, KW-0388 y KW-0392 tienen fecha de vencimiento entre el 10 y 14 de junio. Se recomienda priorizar su despacho.' },
+  { id:3, urgency:'media', area:'logistica', cliente:'KAWDOBA', resolved:false,
+    time:'Ayer 22:05', title:'SLA de pedidos superó umbral (14.2h vs meta 12h)',
+    msg:'El tiempo promedio de procesamiento de pedidos B2B superó el objetivo establecido. Revisar cuellos de botella en el proceso de picking.' },
+  { id:4, urgency:'alta', area:'ventas', cliente:'NALUA', resolved:true,
+    time:'Ayer 14:30', title:'Caída de conversión en e-commerce (-18%)',
+    msg:'La tasa de conversión del canal online cayó por debajo del benchmark. El consultor revisó y se generó recomendación de marketing.' },
+  { id:5, urgency:'media', area:'retencion', cliente:'MODA360', resolved:true,
+    time:'05 Jun 10:15', title:'4 clientes VIP sin compra en 21 días',
+    msg:'Clientes con historial de compra mensual no han vuelto a comprar. Se envió campaña de reactivación.' },
+];
+
+let currentArea = 'todas';
+let currentEstado = 'sin-resolver';
+
+function setArea(el, area) {
+  currentArea = area;
+  document.querySelectorAll('#areaFilters button').forEach(b => { b.className = 'btn btn-ghost btn-sm'; });
+  el.className = 'btn btn-primary btn-sm';
+  renderAlerts();
+}
+
+function setEstado(val) { currentEstado = val; renderAlerts(); }
+
+function renderAlerts() {
+  let filtered = ALERTS.filter(a => {
+    const areaOk = currentArea==='todas' || a.area===currentArea;
+    const estadoOk = currentEstado==='todas' || (currentEstado==='sin-resolver' && !a.resolved) || (currentEstado==='resueltas' && a.resolved);
+    return areaOk && estadoOk;
+  });
+
+  const el = document.getElementById('alertsList');
+  if (!filtered.length) {
+    el.innerHTML = `<div style="text-align:center;padding:48px;color:var(--gray-mid)"><div style="font-size:36px;margin-bottom:10px">✓</div><div style="font-size:14px;font-weight:600">Sin alertas en esta categoría</div></div>`;
+    return;
+  }
+
+  const urgColors = { alta:'var(--danger)', media:'var(--warning)', baja:'var(--secondary)' };
+  const urgLabels = { alta:'🔴 ALTA', media:'🟡 MEDIA', baja:'🔵 BAJA' };
+  const areaLabel = { ventas:'Ventas', inventario:'Inventario', marketing:'Marketing', logistica:'Logística', retencion:'Retención' };
+
+  el.innerHTML = filtered.map(a => `
+    <div class="alert-item ${a.urgency} ${a.resolved?'resolved':''}" id="alert-${a.id}" style="${a.resolved?'opacity:.6':''}">
+      <div class="alert-item-header">
+        <span class="chip ${a.urgency==='alta'?'red':a.urgency==='media'?'yellow':'blue'}" style="font-size:11px">${urgLabels[a.urgency]}</span>
+        <span class="chip gray">${areaLabel[a.area]||a.area}</span>
+        <span style="font-size:12px;font-weight:600;color:var(--secondary)">Cliente: ${a.cliente}</span>
+        <span class="alert-item-time" style="margin-left:auto">${a.time}</span>
+      </div>
+      <div class="alert-item-title">${a.title}</div>
+      <div class="alert-item-body">${a.msg}</div>
+      <div class="alert-item-footer">
+        <a href="crm-cliente.html" class="btn btn-secondary btn-sm">Ver en dashboard</a>
+        ${!a.resolved
+          ? `<button class="btn btn-success btn-sm" onclick="resolveAlert(${a.id})"><svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Marcar resuelta</button>`
+          : `<span class="chip green">Resuelta</span>`}
+        <a href="crm-recomendaciones.html" class="btn btn-ghost btn-sm" style="margin-left:auto">Generar recomendación IA →</a>
+      </div>
+    </div>
+  `).join('');
+}
+
+function resolveAlert(id) {
+  const a = ALERTS.find(x=>x.id===id);
+  if (a) { a.resolved = true; showToast('Alerta marcada como resuelta','success'); renderAlerts(); }
+}
+
+function resolveAll() {
+  ALERTS.filter(a=>!a.resolved).forEach(a=>a.resolved=true);
+  showToast('Todas las alertas marcadas como resueltas','success');
+  renderAlerts();
+}
+
+renderAlerts();
+</script>
+</body>
+</html>

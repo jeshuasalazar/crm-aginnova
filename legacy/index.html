@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CRM Aginnova — Ingreso</title>
+<link rel="stylesheet" href="crm-styles.css">
+<style>
+  body { margin:0; background:#F4F6F9; }
+  .login-page {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  /* LEFT PANEL */
+  .login-left {
+    background: linear-gradient(150deg, #1C3F6E 0%, #0f2540 60%, #1a3560 100%);
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: flex-start;
+    padding: 60px 64px; position: relative; overflow: hidden;
+    color: #fff;
+  }
+  .login-left::before {
+    content: ''; position: absolute;
+    width: 500px; height: 500px; border-radius: 50%;
+    background: rgba(74,123,181,.18);
+    top: -120px; right: -160px;
+  }
+  .login-left::after {
+    content: ''; position: absolute;
+    width: 300px; height: 300px; border-radius: 50%;
+    background: rgba(74,123,181,.1);
+    bottom: -80px; left: -60px;
+  }
+  .login-brand { position: relative; z-index: 1; margin-bottom: 48px; }
+  .login-brand img { height: 52px; filter: brightness(0) invert(1); }
+  .login-brand .brand-name {
+    font-family:'Montserrat',sans-serif; font-weight:800;
+    font-size: 28px; color:#fff; letter-spacing:-.5px; margin-top:14px;
+  }
+  .login-brand .brand-sub {
+    font-size: 13px; color:rgba(255,255,255,.55); margin-top:4px;
+  }
+  .login-headline {
+    position: relative; z-index: 1;
+  }
+  .login-headline h1 {
+    font-family:'Montserrat',sans-serif; font-weight: 800;
+    font-size: 36px; line-height: 1.2; color: #fff;
+    margin-bottom: 16px;
+  }
+  .login-headline h1 span { color: rgba(255,255,255,.55); }
+  .login-headline p { font-size: 15px; color: rgba(255,255,255,.65); line-height: 1.6; max-width: 380px; }
+  .login-features { position: relative; z-index:1; margin-top:40px; display:flex; flex-direction:column; gap:12px; }
+  .login-feature { display:flex; align-items:center; gap:12px; color:rgba(255,255,255,.8); font-size:13.5px; }
+  .login-feature-dot { width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,.5); flex-shrink:0; }
+
+  /* RIGHT PANEL */
+  .login-right {
+    display: flex; align-items: center; justify-content: center;
+    background: #fff; padding: 60px 48px;
+  }
+  .login-form-wrap { width: 100%; max-width: 400px; }
+  .login-form-wrap h2 {
+    font-family:'Montserrat',sans-serif; font-weight:800;
+    font-size: 26px; color: #1C3F6E; margin-bottom:6px;
+  }
+  .login-form-wrap .subtitle { font-size:14px; color:#718096; margin-bottom:36px; }
+  .login-form-wrap .form-label { font-size:12.5px; font-weight:600; color:#5A6472; }
+  .login-form-wrap .form-input {
+    height:48px; font-size:14.5px; border-radius:9px;
+    border:1.5px solid #e2e8f0; background:#f7f9fc;
+  }
+  .login-form-wrap .form-input:focus {
+    background:#fff; border-color:#4A7BB5;
+    box-shadow: 0 0 0 3px rgba(74,123,181,.12);
+  }
+  .login-submit {
+    width:100%; height:50px; background:#1C3F6E; color:#fff;
+    border:none; border-radius:9px; font-size:15px; font-weight:700;
+    cursor:pointer; font-family:inherit; margin-top:24px;
+    transition: background .15s, transform .1s;
+    letter-spacing:.2px;
+  }
+  .login-submit:hover  { background:#142e52; }
+  .login-submit:active { transform:scale(.99); }
+  .login-forgot { display:block; text-align:center; margin-top:16px; font-size:13px; color:#718096; text-decoration:none; }
+  .login-forgot:hover { color:#4A7BB5; text-decoration:underline; }
+  .login-divider { display:flex; align-items:center; gap:12px; margin:28px 0; color:#e2e8f0; font-size:12px; color:#b0bec5; }
+  .login-divider::before, .login-divider::after { content:''; flex:1; height:1px; background:#e2e8f0; }
+  .login-footer { margin-top:36px; font-size:11.5px; color:#b0bec5; text-align:center; }
+
+  /* Decorative grid dots */
+  .grid-dots {
+    position:absolute; bottom:40px; right:40px; z-index:1;
+    display:grid; grid-template-columns:repeat(6,1fr); gap:8px;
+  }
+  .grid-dot { width:4px; height:4px; border-radius:50%; background:rgba(255,255,255,.2); }
+
+  @media (max-width:768px) {
+    .login-page { grid-template-columns:1fr; }
+    .login-left { display:none; }
+    .login-right { padding:40px 24px; }
+  }
+</style>
+</head>
+<body>
+<div class="login-page">
+
+  <!-- LEFT: Brand panel -->
+  <div class="login-left">
+    <div class="login-brand">
+      <img src="uploads/Logo.jpg" alt="Aginnova" onerror="this.style.display='none'">
+      <div class="brand-name">aginnova</div>
+      <div class="brand-sub">Agencia de Transformación Digital</div>
+    </div>
+    <div class="login-headline">
+      <h1>CRM Inteligente<br><span>para el crecimiento</span><br>de tus clientes.</h1>
+      <p>Gestiona KPIs, comisiones y recomendaciones de IA en tiempo real. Toda tu cartera de clientes, en un solo lugar.</p>
+    </div>
+    <div class="login-features">
+      <div class="login-feature"><div class="login-feature-dot"></div>Panel ROI con cálculo automático de comisiones</div>
+      <div class="login-feature"><div class="login-feature-dot"></div>Recomendaciones de IA aprobadas por consultor</div>
+      <div class="login-feature"><div class="login-feature-dot"></div>Alertas en tiempo real por área y cliente</div>
+      <div class="login-feature"><div class="login-feature-dot"></div>Multi-tenant seguro para cada MIPYME</div>
+    </div>
+    <div class="grid-dots" id="gridDots"></div>
+  </div>
+
+  <!-- RIGHT: Login form -->
+  <div class="login-right">
+    <div class="login-form-wrap">
+      <h2>Bienvenido</h2>
+      <p class="subtitle">Ingresa tus credenciales para continuar</p>
+
+      <div class="form-group">
+        <label class="form-label">Correo electrónico</label>
+        <input type="email" class="form-input" placeholder="consultor@aginnova.mx" id="emailInput" value="juan.perez@aginnova.mx">
+      </div>
+      <div class="form-group" style="margin-bottom:0">
+        <label class="form-label">Contraseña</label>
+        <input type="password" class="form-input" placeholder="••••••••" id="passInput" value="demo1234">
+      </div>
+
+      <button class="login-submit" id="loginBtn" onclick="doLogin()">Ingresar al CRM</button>
+      <a href="#" class="login-forgot">¿Olvidaste tu contraseña?</a>
+
+      <div class="login-divider">acceso de demostración</div>
+      <div style="display:flex; gap:8px;">
+        <button onclick="quickLogin('consultor')" style="flex:1;padding:10px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;background:#f7f9fc;color:#5A6472;font-family:inherit;">Consultor</button>
+        <button onclick="quickLogin('director')"  style="flex:1;padding:10px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;background:#f7f9fc;color:#5A6472;font-family:inherit;">Director</button>
+        <button onclick="quickLogin('cliente')"   style="flex:1;padding:10px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;background:#f7f9fc;color:#5A6472;font-family:inherit;">Cliente</button>
+      </div>
+
+      <div class="login-footer">CRM Aginnova v1.0 · © 2026 Aginnova · Todos los derechos reservados</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Generate grid dots
+const gd = document.getElementById('gridDots');
+for (let i=0;i<36;i++) { const d=document.createElement('div'); d.className='grid-dot'; gd.appendChild(d); }
+
+function doLogin() {
+  const btn = document.getElementById('loginBtn');
+  btn.textContent = 'Verificando...';
+  btn.style.opacity = '.7';
+  setTimeout(() => { window.location.href = 'crm-dashboard.html'; }, 900);
+}
+
+function quickLogin(role) {
+  const roles = {
+    consultor: { email:'juan.perez@aginnova.mx',     pass:'••••••••' },
+    director:  { email:'director@aginnova.mx',       pass:'••••••••' },
+    cliente:   { email:'nalua.contacto@gmail.com',   pass:'••••••••' },
+  };
+  document.getElementById('emailInput').value = roles[role].email;
+  document.getElementById('passInput').value  = roles[role].pass;
+  setTimeout(doLogin, 300);
+}
+
+document.addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+</script>
+</body>
+</html>

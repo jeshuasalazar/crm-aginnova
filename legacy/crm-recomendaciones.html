@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recomendaciones IA — CRM Aginnova</title>
+<link rel="stylesheet" href="crm-styles.css">
+<script src="crm-nav.js"></script>
+</head>
+<body>
+<div class="app-layout">
+  <div id="sidebar-mount"></div>
+  <div class="main-content">
+    <div id="header-mount"></div>
+    <div class="content">
+
+      <div class="breadcrumb">
+        <a href="crm-dashboard.html">Dashboard</a>
+        <span class="breadcrumb-sep">›</span> Recomendaciones IA
+      </div>
+
+      <!-- HEADER -->
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <div style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:22px;color:var(--primary)">Centro de Recomendaciones IA</div>
+          <div style="font-size:13px;color:var(--gray-mid);margin-top:3px">Generadas por IA · Revisadas y aprobadas por el consultor antes de enviar</div>
+        </div>
+        <div class="flex gap-2">
+          <select class="form-input form-select" style="width:180px">
+            <option>Todos los clientes</option>
+            <option>NALUA</option>
+            <option>KAWDOBA</option>
+            <option>FERREX</option>
+          </select>
+          <button class="btn btn-primary" onclick="openModal('genModal')">
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg>
+            Generar con IA
+          </button>
+        </div>
+      </div>
+
+      <!-- STATUS TABS -->
+      <div class="flex gap-3 mb-6" style="flex-wrap:wrap">
+        <button class="btn btn-primary" id="tab-pendiente" onclick="filterRecs('pendiente')">
+          Pendientes <span style="background:rgba(255,255,255,.25);border-radius:10px;padding:1px 7px;margin-left:4px;font-size:11px">5</span>
+        </button>
+        <button class="btn btn-ghost" id="tab-aprobada" onclick="filterRecs('aprobada')">Aprobadas <span style="background:var(--success-lt);color:var(--success);border-radius:10px;padding:1px 7px;margin-left:4px;font-size:11px">3</span></button>
+        <button class="btn btn-ghost" id="tab-descartada" onclick="filterRecs('descartada')">Descartadas <span style="background:var(--bg-page);border-radius:10px;padding:1px 7px;margin-left:4px;font-size:11px">2</span></button>
+        <button class="btn btn-ghost" id="tab-historial" onclick="filterRecs('historial')">Historial</button>
+      </div>
+
+      <!-- RECS LIST -->
+      <div id="recsList"></div>
+
+    </div>
+  </div>
+</div>
+
+<!-- GENERATE MODAL -->
+<div class="modal-overlay" id="genModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">Generar Recomendación IA</span>
+      <button class="close-btn" onclick="closeModal('genModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Cliente</label>
+        <select class="form-input form-select"><option>NALUA</option><option>KAWDOBA</option><option>FERREX</option></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Área de análisis</label>
+        <select class="form-input form-select"><option>Ventas</option><option>Marketing</option><option>Inventario</option><option>Logística</option><option>Retención</option></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Contexto adicional (opcional)</label>
+        <textarea class="form-textarea" placeholder="Ej: El cliente está por debajo de meta esta semana, enfocarse en estrategias de conversión rápida..."></textarea>
+      </div>
+      <div style="background:var(--bg-page);border-radius:8px;padding:12px;font-size:12.5px;color:var(--gray-mid)">
+        ℹ La IA analizará los últimos 30 días de datos del cliente y generará recomendaciones personalizadas basadas en patrones detectados.
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('genModal')">Cancelar</button>
+      <button class="btn btn-primary" onclick="closeModal('genModal');simulateGeneration()">
+        <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg>
+        Generar ahora
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="editRecModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">Editar y Enviar Recomendación</span>
+      <button class="close-btn" onclick="closeModal('editRecModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Mensaje para el cliente</label>
+        <textarea class="form-textarea" id="editRecText" style="min-height:120px"></textarea>
+      </div>
+      <div style="background:var(--bg-page);border-radius:8px;padding:12px;margin-bottom:14px">
+        <div style="font-size:11px;font-weight:700;color:var(--gray-mid);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Vista previa — lo que verá el cliente</div>
+        <div style="font-size:13.5px;color:var(--gray-dark);line-height:1.6" id="previewText">—</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Canal de envío</label>
+        <select class="form-input form-select"><option>Email</option><option>WhatsApp</option><option>En plataforma</option></select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('editRecModal')">Cancelar</button>
+      <button class="btn btn-secondary" onclick="showToast('Guardado como borrador','');closeModal('editRecModal')">Borrador</button>
+      <button class="btn btn-success" onclick="sendRec()">
+        <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        Enviar al cliente
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- DISCARD MODAL -->
+<div class="modal-overlay" id="discardModal">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-header">
+      <span class="modal-title">Descartar recomendación</span>
+      <button class="close-btn" onclick="closeModal('discardModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Motivo (opcional)</label>
+        <select class="form-input form-select">
+          <option>No es relevante para el cliente</option>
+          <option>Ya fue comunicado previamente</option>
+          <option>El cliente ya tomó acción</option>
+          <option>Bajo nivel de confianza</option>
+          <option>Otro motivo</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('discardModal')">Cancelar</button>
+      <button class="btn btn-danger" onclick="confirmDiscard()">Descartar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+mountNav('ia','Recomendaciones IA', { user:'Juan Pérez', role:'Consultor', alerts:3 });
+
+const RECS = [
+  { id:1, status:'pendiente', type:'Ventas', cliente:'NALUA', confidence:92,
+    text:'Las ventas del segmento Línea Sport muestran una aceleración del 18% esta semana. Se recomienda aumentar la inversión publicitaria en Instagram un 25% durante los próximos 5 días para capitalizar el momento y superar la meta mensual de $60,750.',
+    fecha:'Hoy 15:20' },
+  { id:2, status:'pendiente', type:'Inventario', cliente:'KAWDOBA', confidence:87,
+    text:'Se detectaron 3 SKUs de materias primas con rotación superior al 140% de lo proyectado. Es urgente generar órdenes de recompra para evitar desabasto en la semana 4. Los proveedores P-02 y P-07 tienen tiempos de entrega de 4 días.',
+    fecha:'Hoy 12:45' },
+  { id:3, status:'pendiente', type:'Marketing', cliente:'NALUA', confidence:79,
+    text:'El CTR de las campañas en Facebook Ads cayó 12% respecto a la semana anterior. Se sugiere rotar los creativos actuales y probar un formato de carrusel enfocado en testimonios de clientes para recuperar el rendimiento.',
+    fecha:'Ayer 18:30' },
+  { id:4, status:'pendiente', type:'Retención', cliente:'SOLTEK', confidence:94,
+    text:'Se identificaron 3 clientes de alto valor (ticket promedio >$8,000) sin compra en los últimos 18 días. Se recomienda lanzar una campaña de reactivación con descuento del 10% en su categoría preferida.',
+    fecha:'Ayer 09:10' },
+  { id:5, status:'pendiente', type:'Logística', cliente:'KAWDOBA', confidence:82,
+    text:'El SLA promedio de pedidos B2B subió a 14.2h esta semana, superando el objetivo de 12h. Se recomienda revisar el proceso de picking en almacén y reasignar recursos del turno matutino.',
+    fecha:'06 Jun 11:55' },
+  { id:6, status:'aprobada', type:'Ventas', cliente:'FERREX', confidence:88,
+    text:'Con base en el historial de compras estacionales, se proyecta un incremento de demanda del 20-30% en productos de construcción durante junio. Incrementar stock de cemento y varillas desde ahora para no perder ventas.',
+    fecha:'05 Jun 14:00' },
+  { id:7, status:'aprobada', type:'Marketing', cliente:'MODA360', confidence:91,
+    text:'La temporada de rebajas de verano inicia en 3 semanas. Se recomienda preparar campaña de anticipación con lista de espera para la nueva colección, lo que históricamente genera 35% más conversiones en el lanzamiento.',
+    fecha:'04 Jun 10:20' },
+  { id:8, status:'aprobada', type:'Retención', cliente:'NALUA', confidence:85,
+    text:'El programa de fidelidad actual tiene baja participación (12%). Se recomienda simplificar el mecanismo de puntos y enviar recordatorio personalizado a los 180 clientes frecuentes con saldo acumulado sin redimir.',
+    fecha:'03 Jun 16:45' },
+  { id:9, status:'descartada', type:'Inventario', cliente:'FERREX', confidence:65,
+    text:'Se detectó exceso de inventario en producto #F-089. Considerar liquidación con descuento del 20%.', fecha:'02 Jun 08:30' },
+  { id:10, status:'descartada', type:'Ventas', cliente:'AGROTEX', confidence:58,
+    text:'Abrir canal de venta directa al consumidor final para diversificar ingresos.', fecha:'01 Jun 11:00' },
+];
+
+let currentFilter = 'pendiente';
+let discardTarget = null;
+
+function filterRecs(status) {
+  currentFilter = status;
+  ['pendiente','aprobada','descartada','historial'].forEach(s => {
+    const btn = document.getElementById('tab-'+s);
+    if (btn) { btn.className = s===status ? 'btn btn-primary' : 'btn btn-ghost'; }
+  });
+  renderRecs(status);
+}
+
+function renderRecs(status) {
+  const list = document.getElementById('recsList');
+  const filtered = status==='historial'
+    ? RECS.filter(r=>r.status!=='pendiente')
+    : RECS.filter(r=>r.status===status);
+
+  if (!filtered.length) {
+    list.innerHTML = `<div style="text-align:center;padding:48px;color:var(--gray-mid)">
+      <div style="font-size:40px;margin-bottom:12px">✓</div>
+      <div style="font-size:15px;font-weight:600">Sin recomendaciones en esta categoría</div>
+    </div>`;
+    return;
+  }
+
+  list.innerHTML = filtered.map(r => {
+    const typeColors = { Ventas:'blue', Marketing:'orange', Inventario:'yellow', Logística:'green', Retención:'blue' };
+    const col = typeColors[r.type] || 'blue';
+    const actions = r.status==='pendiente' ? `
+      <button class="btn btn-ghost btn-sm" onclick="openEditModal(${r.id})">
+        <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        Editar y enviar
+      </button>
+      <button class="btn btn-success btn-sm" onclick="approveRec(${r.id})">
+        <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        Enviar directo</button>
+      <button class="btn btn-ghost btn-sm" style="color:var(--danger)" onclick="discardRec(${r.id})">
+        <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+        Descartar
+      </button>` : `<span class="chip ${r.status==='aprobada'?'green':'gray'}">${r.status==='aprobada'?'Enviada al cliente':'Descartada'}</span>`;
+
+    return `<div class="rec-card ${r.status!=='pendiente'?r.status:''}">
+      <div class="flex items-center justify-between">
+        <div class="flex gap-2 items-center">
+          <span class="chip ${col}">${r.type}</span>
+          <span style="font-size:12px;color:var(--gray-mid);font-weight:600">${r.cliente}</span>
+        </div>
+        <span style="font-size:11.5px;color:var(--gray-mid)">${r.fecha}</span>
+      </div>
+      <div class="rec-text">${r.text}</div>
+      <div class="rec-meta">
+        <div class="confidence-bar">
+          <span>Confianza:</span>
+          <div class="bar-track"><div class="bar-fill" style="width:${r.confidence}%"></div></div>
+          <span style="font-weight:700;color:${r.confidence>=85?'var(--success)':r.confidence>=70?'#b07b0f':'var(--danger)'}">${r.confidence}%</span>
+        </div>
+      </div>
+      <div class="rec-actions">${actions}</div>
+    </div>`;
+  }).join('');
+}
+
+function openEditModal(id) {
+  const r = RECS.find(x=>x.id===id);
+  if (!r) return;
+  document.getElementById('editRecText').value = r.text;
+  document.getElementById('previewText').textContent = r.text;
+  document.getElementById('editRecModal').dataset.recId = id;
+  openModal('editRecModal');
+  document.getElementById('editRecText').addEventListener('input', function() {
+    document.getElementById('previewText').textContent = this.value;
+  });
+}
+
+function sendRec() {
+  closeModal('editRecModal');
+  showToast('Recomendación enviada al cliente','success');
+  filterRecs(currentFilter);
+}
+
+function approveRec(id) {
+  showToast('Recomendación enviada al cliente','success');
+  const r = RECS.find(x=>x.id===id);
+  if (r) r.status = 'aprobada';
+  filterRecs(currentFilter);
+}
+
+function discardRec(id) {
+  discardTarget = id;
+  openModal('discardModal');
+}
+
+function confirmDiscard() {
+  if (discardTarget) {
+    const r = RECS.find(x=>x.id===discardTarget);
+    if (r) r.status = 'descartada';
+  }
+  closeModal('discardModal');
+  showToast('Recomendación descartada','warning');
+  filterRecs(currentFilter);
+}
+
+function simulateGeneration() {
+  showToast('Analizando datos del cliente...','');
+  setTimeout(()=>showToast('¡Nueva recomendación generada!','success'),2200);
+}
+
+renderRecs('pendiente');
+</script>
+</body>
+</html>
