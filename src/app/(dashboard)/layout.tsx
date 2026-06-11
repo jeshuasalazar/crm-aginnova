@@ -1,21 +1,23 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/utils/supabase/server'
+import { createAdminClient } from '@/utils/supabase/admin'
 import { getCurrentUserProfile } from '@/utils/supabase/profile'
 import Link from 'next/link'
-import { 
-  Grid, 
-  Users, 
-  TrendingUp, 
-  Sparkles, 
-  Bell, 
-  Upload, 
-  Target, 
-  Settings, 
-  LogOut, 
-  Package, 
+import {
+  Grid,
+  Users,
+  TrendingUp,
+  Sparkles,
+  Bell,
+  Upload,
+  Target,
+  Settings,
+  LogOut,
+  Package,
   Truck,
   Boxes,
-  Zap
+  Zap,
+  ShieldCheck
 } from 'lucide-react'
 
 export default async function DashboardLayout({
@@ -53,6 +55,16 @@ export default async function DashboardLayout({
   
   const { count: alertsCount } = await alertsQuery
   const badgeCount = alertsCount || 0
+
+  // Verificar si el usuario ha aceptado el aviso de privacidad
+  // Usa admin client porque profiles tiene RLS que bloquea al cliente normal
+  const admin = createAdminClient()
+  const { data: profileData } = await admin
+    .from('profiles')
+    .select('privacy_accepted_at')
+    .eq('id', profile.id)
+    .single()
+  const needsPrivacyAcceptance = !profileData?.privacy_accepted_at
 
   // Definir ítems del Sidebar dinámicamente
   const SIDEBAR_ITEMS = [
@@ -165,10 +177,66 @@ export default async function DashboardLayout({
           </div>
         </header>
 
+        {/* BANNER AVISO DE PRIVACIDAD — se muestra si no ha aceptado */}
+        {needsPrivacyAcceptance && (
+          <div style={{
+            background: '#1C3F6E', color: 'white',
+            padding: '10px 24px', fontSize: 13,
+            display: 'flex', alignItems: 'center', gap: 12,
+            flexWrap: 'wrap',
+          }}>
+            <ShieldCheck size={16} style={{ flexShrink: 0 }} />
+            <span>
+              Hemos actualizado nuestro{' '}
+              <Link href="/privacidad" style={{ color: '#90CDF4', textDecoration: 'underline' }}>
+                Aviso de Privacidad
+              </Link>{' '}
+              y{' '}
+              <Link href="/terminos" style={{ color: '#90CDF4', textDecoration: 'underline' }}>
+                Términos y Condiciones
+              </Link>.
+              Al continuar usando la plataforma, confirmas tu aceptación.
+            </span>
+            {/* El botón de aceptar requiere server action o client component — se deja como enlace por ahora */}
+            <Link
+              href="/privacidad"
+              style={{
+                marginLeft: 'auto', background: 'rgba(255,255,255,0.15)',
+                padding: '4px 14px', borderRadius: 6, fontSize: 12,
+                color: 'white', textDecoration: 'none', fontWeight: 600,
+                whiteSpace: 'nowrap',
+              }}
+            >
+              Ver aviso completo →
+            </Link>
+          </div>
+        )}
+
         {/* PAGE CONTENT */}
         <main className="content">
           {children}
         </main>
+
+        {/* FOOTER LEGAL */}
+        <footer style={{
+          borderTop: '1px solid #e2e8f0', padding: '12px 24px',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          flexWrap: 'wrap', gap: 8,
+          fontSize: 11.5, color: '#a0aec0',
+        }}>
+          <span>© 2026 INNOVATECH S.A.S. (AGINNOVA) · Folio SAS-1.7-205101-45754</span>
+          <div style={{ display: 'flex', gap: 16 }}>
+            <Link href="/privacidad" style={{ color: '#718096', textDecoration: 'none' }}>
+              Aviso de Privacidad
+            </Link>
+            <Link href="/terminos" style={{ color: '#718096', textDecoration: 'none' }}>
+              Términos y Condiciones
+            </Link>
+            <a href="mailto:mysuscrew@gmail.com" style={{ color: '#718096', textDecoration: 'none' }}>
+              Contacto ARCO
+            </a>
+          </div>
+        </footer>
       </div>
     </div>
   )

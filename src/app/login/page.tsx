@@ -8,10 +8,15 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [privacyAccepted, setPrivacyAccepted] = useState(false)
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
+    if (!privacyAccepted) {
+      setError('Debes aceptar el Aviso de Privacidad y los Términos y Condiciones para continuar.')
+      return
+    }
     setLoading(true)
 
     try {
@@ -203,13 +208,35 @@ export default function LoginPage() {
               />
             </div>
 
+            {/* Checkbox Aviso de Privacidad + T&C */}
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+              <input
+                type="checkbox"
+                id="privacy-accept"
+                checked={privacyAccepted}
+                onChange={(e) => setPrivacyAccepted(e.target.checked)}
+                style={{ marginTop: 3, flexShrink: 0, accentColor: '#1C3F6E', width: 15, height: 15, cursor: 'pointer' }}
+              />
+              <label htmlFor="privacy-accept" style={{ fontSize: 12.5, color: '#718096', lineHeight: 1.5, cursor: 'pointer' }}>
+                He leído y acepto el{' '}
+                <a href="/privacidad" target="_blank" rel="noopener noreferrer" style={{ color: '#1C3F6E', fontWeight: 600 }}>
+                  Aviso de Privacidad Integral
+                </a>{' '}
+                y los{' '}
+                <a href="/terminos" target="_blank" rel="noopener noreferrer" style={{ color: '#1C3F6E', fontWeight: 600 }}>
+                  Términos y Condiciones
+                </a>{' '}
+                de la Plataforma CRM Aginnova.
+              </label>
+            </div>
+
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || !privacyAccepted}
               style={{
-                height: 50, background: loading ? '#8fa8c8' : '#1C3F6E',
+                height: 50, background: (loading || !privacyAccepted) ? '#8fa8c8' : '#1C3F6E',
                 color: 'white', border: 'none', borderRadius: 8,
-                fontWeight: 700, fontSize: 15, cursor: loading ? 'not-allowed' : 'pointer',
+                fontWeight: 700, fontSize: 15, cursor: (loading || !privacyAccepted) ? 'not-allowed' : 'pointer',
                 letterSpacing: '0.3px', transition: 'background 0.2s',
                 marginTop: 4, fontFamily: 'inherit',
               }}

@@ -112,6 +112,7 @@ CREATE TABLE IF NOT EXISTS public.profiles (
   tenant_id UUID NOT NULL REFERENCES public.tenants(id) ON DELETE CASCADE,
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   role TEXT NOT NULL CHECK (role IN ('director', 'consultor', 'finanzas', 'operaciones', 'marketing', 'success', 'cliente_mipyme')),
+  privacy_accepted_at TIMESTAMPTZ,
   created_at TIMESTAMPTZ DEFAULT now(),
   UNIQUE(user_id, tenant_id)
 );

@@ -37,6 +37,9 @@ export async function updateSession(request: NextRequest) {
   // Rutas públicas que no requieren autenticación
   const isPublicRoute =
     pathname.startsWith('/login') ||
+    pathname.startsWith('/privacidad') ||   // Aviso de Privacidad — acceso público LFPDPPP
+    pathname.startsWith('/terminos') ||     // Términos y Condiciones — acceso público
+    pathname.startsWith('/cookies') ||      // Política de Cookies — acceso público
     pathname.startsWith('/_next') ||
     pathname.startsWith('/api') ||
     /\.(?:svg|png|jpg|jpeg|gif|webp|ico)$/.test(pathname)
