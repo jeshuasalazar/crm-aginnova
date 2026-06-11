@@ -125,11 +125,22 @@ RETURNS UUID AS $$
 $$ LANGUAGE SQL SECURITY DEFINER;
 
 -- Habilitar RLS en perfiles
+-- IMPORTANTE: las políticas de profiles NO pueden usar get_current_tenant_id()
+-- porque esa función lee profiles (deadlock circular). Usar auth.uid() directamente.
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Allow read profiles for tenant" ON public.profiles;
 DROP POLICY IF EXISTS "Allow mutate profiles" ON public.profiles;
-CREATE POLICY "Allow read profiles for tenant" ON public.profiles FOR SELECT USING (true);
-CREATE POLICY "Allow mutate profiles" ON public.profiles FOR ALL USING (true);
+DROP POLICY IF EXISTS "profiles_select_own" ON public.profiles;
+DROP POLICY IF EXISTS "profiles_insert_own" ON public.profiles;
+DROP POLICY IF EXISTS "profiles_update_own" ON public.profiles;
+-- Cualquier usuario autenticado puede leer perfiles (necesario para que el director vea otros consultores)
+CREATE POLICY "profiles_select_own" ON public.profiles
+  FOR SELECT USING (auth.uid() IS NOT NULL);
+-- Solo puede insertar/actualizar su propio perfil
+CREATE POLICY "profiles_insert_own" ON public.profiles
+  FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "profiles_update_own" ON public.profiles
+  FOR UPDATE USING (auth.uid() = user_id);
 
 -- Habilitar RLS en tablas existentes con la nueva función RLS
 ALTER TABLE public.skydropx_config ENABLE ROW LEVEL SECURITY;
