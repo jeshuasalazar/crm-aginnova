@@ -25,6 +25,10 @@ export default async function DashboardLayout({
 }) {
   const profile = await getCurrentUserProfile()
   if (!profile) {
+    // Sign out before redirecting to break the middleware redirect loop
+    // (authenticated user without a valid profile would loop: / → /login → /)
+    const supabase = await createClient()
+    await supabase.auth.signOut()
     redirect('/login')
   }
 
