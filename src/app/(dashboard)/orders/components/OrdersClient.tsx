@@ -8,10 +8,11 @@ import CreateShipmentModal from './CreateShipmentModal'
 
 interface OrdersClientProps {
   initialOrders: Order[]
-  tenant: string
+  tenantId: string
+  tenantName: string
 }
 
-export default function OrdersClient({ initialOrders, tenant }: OrdersClientProps) {
+export default function OrdersClient({ initialOrders, tenantId, tenantName }: OrdersClientProps) {
   const [orders, setOrders] = useState<Order[]>(initialOrders)
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'shipped'>('all')
@@ -56,7 +57,7 @@ export default function OrdersClient({ initialOrders, tenant }: OrdersClientProp
           <div className="kpi-icon blue">
             <ShoppingBag size={20} />
           </div>
-          <span className="kpi-label">Total Pedidos</span>
+          <span className="kpi-label">Total Pedidos ({tenantName})</span>
           <span className="kpi-value">{totalOrders}</span>
         </div>
 
@@ -218,7 +219,7 @@ export default function OrdersClient({ initialOrders, tenant }: OrdersClientProp
       <CreateOrderModal 
         isOpen={isOrderModalOpen} 
         onClose={() => setIsOrderModalOpen(false)} 
-        tenant={tenant}
+        tenant={tenantId}
         onOrderCreated={handleOrderCreated}
       />
 
@@ -228,7 +229,7 @@ export default function OrdersClient({ initialOrders, tenant }: OrdersClientProp
           isOpen={!!selectedOrderForShipment}
           onClose={() => setSelectedOrderForShipment(null)}
           order={selectedOrderForShipment}
-          tenant={tenant}
+          tenant={tenantId}
           onShipmentCompleted={handleShipmentCompleted}
         />
       )}

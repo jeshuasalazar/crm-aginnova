@@ -1,20 +1,19 @@
 import { redirect } from 'next/navigation'
-import { createClient } from '@/utils/supabase/server'
+import { getCurrentUserProfile } from '@/utils/supabase/profile'
 import { getOrders } from '@/app/actions/orders'
 import OrdersClient from './components/OrdersClient'
 
 export default async function OrdersPage() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const profile = await getCurrentUserProfile()
 
-  if (!user) {
+  if (!profile) {
     redirect('/login')
   }
 
-  // Determinar Tenant (en producción vendría de metadata/perfil; aquí permitimos demo por email o default NALUA)
-  const tenant = user.email?.toLowerCase().includes('kawdoba') ? 'KAWDOBA' : 'NALUA'
+  const tenantId = profile.tenant_id
+  const tenantName = profile.tenant?.name || 'NALUA'
 
-  const orders = await getOrders(tenant)
+  const orders = await getOrders(tenantId)
 
   return (
     <div className="flex flex-col gap-6">
@@ -25,7 +24,8 @@ export default async function OrdersPage() {
         </div>
       </div>
 
-      <OrdersClient initialOrders={orders} tenant={tenant} />
+      <OrdersClient initialOrders={orders} tenantId={tenantId} tenantName={tenantName} />
     </div>
   )
 }
+

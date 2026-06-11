@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Client, createClientRecord, updateClientStatus } from '@/app/actions/clients'
 import { Plus, Search, HelpCircle, Check, X, ShieldAlert, Settings } from 'lucide-react'
+import Link from 'next/link'
 
 interface ClientesClientProps {
   initialClients: Client[]
@@ -189,6 +190,12 @@ export default function ClientesClient({ initialClients }: ClientesClientProps) 
               >
                 {client.status === 'active' ? 'Pausar' : 'Reactivar'}
               </button>
+              <Link 
+                href={`/clientes/${client.id}`} 
+                className="btn btn-sm btn-primary flex-1 text-center justify-center"
+              >
+                Ver Dashboard
+              </Link>
             </div>
           </div>
         ))}

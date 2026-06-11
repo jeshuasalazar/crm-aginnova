@@ -1,19 +1,19 @@
 import { redirect } from 'next/navigation'
-import { createClient } from '@/utils/supabase/server'
+import { getCurrentUserProfile } from '@/utils/supabase/profile'
 import { getShipments } from '@/app/actions/orders'
 import { Download, ExternalLink, RefreshCw, Truck } from 'lucide-react'
 
 export default async function ShipmentsPage() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const profile = await getCurrentUserProfile()
 
-  if (!user) {
+  if (!profile) {
     redirect('/login')
   }
 
-  const tenant = user.email?.toLowerCase().includes('kawdoba') ? 'KAWDOBA' : 'NALUA'
+  const tenantId = profile.tenant_id
+  const tenantName = profile.tenant?.name || 'NALUA'
 
-  const shipments = await getShipments(tenant)
+  const shipments = await getShipments(tenantId)
 
   // Calcs
   const totalShipments = shipments.length
@@ -59,8 +59,9 @@ export default async function ShipmentsPage() {
       {/* SHIPMENTS LIST */}
       <div className="card">
         <div className="card-header">
-          <h3 className="card-title">Envíos de {tenant}</h3>
+          <h3 className="card-title">Envíos de {tenantName}</h3>
         </div>
+
 
         <div className="table-wrap">
           <table className="dtable">
@@ -78,7 +79,7 @@ export default async function ShipmentsPage() {
               {shipments.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="text-center py-8 text-gray-400">
-                    Aún no se han generado envíos para {tenant}
+                    Aún no se han generado envíos para {tenantName}
                   </td>
                 </tr>
               ) : (
