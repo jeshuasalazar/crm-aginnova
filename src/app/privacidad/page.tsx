@@ -76,7 +76,7 @@ export default function PrivacidadPage() {
           </ol>
         </SubSection>
         <SubSection title="Finalidades secundarias (no indispensables)">
-          <ol style={{ ...olStyle, start: 10 }}>
+          <ol style={olStyle} start={10}>
             <li>Generar recomendaciones estratégicas mediante inteligencia artificial para la toma de decisiones del Tenant.</li>
             <li>Elaborar estadísticas agregadas y análisis de tendencias para mejorar la Plataforma.</li>
             <li>Enviar comunicaciones informativas sobre actualizaciones, nuevas funcionalidades o mantenimientos programados.</li>
