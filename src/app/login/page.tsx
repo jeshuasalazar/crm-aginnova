@@ -2,10 +2,8 @@
 
 import { useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
-import { useRouter } from 'next/navigation'
 
 export default function LoginPage() {
-  const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -35,8 +33,8 @@ export default function LoginPage() {
         return
       }
 
-      router.push('/')
-      router.refresh()
+      // Full page reload garantiza que el servidor lea las cookies de sesión frescas
+      window.location.href = '/'
     } catch {
       setError('Error de conexión. Intenta de nuevo.')
       setLoading(false)

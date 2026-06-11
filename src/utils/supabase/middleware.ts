@@ -15,7 +15,7 @@ export async function updateSession(request: NextRequest) {
           return request.cookies.getAll()
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) => request.cookies.set(name, value))
+          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
           supabaseResponse = NextResponse.next({
             request,
           })
@@ -27,8 +27,33 @@ export async function updateSession(request: NextRequest) {
     }
   )
 
-  // refreshes the session if expired
-  await supabase.auth.getUser()
+  // Refresca la sesión expirada y obtiene el usuario actual
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  const { pathname } = request.nextUrl
+
+  // Rutas públicas que no requieren autenticación
+  const isPublicRoute =
+    pathname.startsWith('/login') ||
+    pathname.startsWith('/_next') ||
+    pathname.startsWith('/api') ||
+    /\.(?:svg|png|jpg|jpeg|gif|webp|ico)$/.test(pathname)
+
+  // Usuario no autenticado accede a ruta protegida → redirigir a /login
+  if (!user && !isPublicRoute) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/login'
+    return NextResponse.redirect(url)
+  }
+
+  // Usuario autenticado accede a /login → redirigir al dashboard
+  if (user && pathname.startsWith('/login')) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/'
+    return NextResponse.redirect(url)
+  }
 
   return supabaseResponse
 }
